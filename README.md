@@ -44,3 +44,7 @@ Ex:
       - 'domain': 'gmail.com',
       - 'port': '465',
       - 'local_password': '*senha da maquina local'
+
+Rodando o projeto
+---------------------
+    python run.py
