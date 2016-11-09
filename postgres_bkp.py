@@ -63,7 +63,7 @@ class Pg_Backup():
             msg = ' Could not mount server'
             self.db.insert(
                 self.config['db_name_log_record'], {
-                    'backup_id': self.pk,
+                    'backup_id': self.pk_row,
                     'log': msg,
                     'success': False,
                     'log_datetime': 'now()'
@@ -75,7 +75,7 @@ class Pg_Backup():
 
         self.db.insert(
             self.config['db_name_log_record'], {
-                'backup_id': self.pk,
+                'backup_id': self.pk_row,
                 'log': msg,
                 'success': True,
                 'log_datetime': 'now()'
