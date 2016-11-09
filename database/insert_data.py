@@ -2,6 +2,7 @@
 import psycopg2
 from decouple import config
 
+
 class InsertData():
     conn = None
 
@@ -11,8 +12,13 @@ class InsertData():
     def init_db_config(self, config):
         try:
             self.conn = psycopg2.connect(
-                "dbname='backup_genomika'"
-                " user='postgres' host='localhost' password='g3n0m1k@'"
+                "dbname='{0}'"
+                " user='{1}' host='{2}' password={3}".format(
+                    config('DB_NAME'),
+                    config('DB_USER'),
+                    config('DB_HOST'),
+                    config('DB_PASSWORD')
+                )
             )
             print ("Conectado no Banco com sucesso!")
         except:
