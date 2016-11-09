@@ -2,6 +2,8 @@
 from postgres_bkp import Pg_Backup
 
 BKP_CONFIG = {
+    'db_name_record': 'core_backup',
+    'db_name_log_record': 'core_backuplog',
     'user_password': 'g3n0m1k@',
     'pg_user': 'genomika',
     'host_machine': 'localhost',

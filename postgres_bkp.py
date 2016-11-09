@@ -1,5 +1,6 @@
 
 # -*- coding: utf-8 -*-
+from database.insert_data import InsertData
 from utils import zip_folder
 from utils import delete_folder
 from utils import get_last_folder_path
@@ -14,7 +15,9 @@ import os
 
 
 class Pg_Backup():
+    db = None
     config = None
+    pk_row = None
     zip_folder_path = None
     bkp_folder_path = None
     email_context_success = ''
@@ -42,6 +45,7 @@ class Pg_Backup():
     }
 
     def __init__(self, bkp_config, email_config):
+        self.db = InsertData()
         self.config = bkp_config
         self.email_config = email_config
 
@@ -56,10 +60,29 @@ class Pg_Backup():
 
         mount = subprocess.call(cmd, shell=True)
         if mount != 0:
-            raise Exception(" Could not mount server")
+            msg = ' Could not mount server'
+            self.db.insert(
+                self.config['db_name_log_record'], {
+                    'backup_id': self.pk,
+                    'log': msg,
+                    'success': False,
+                    'log_datetime': 'now()'
+                }
+            )
+            raise Exception(msg)
 
+        msg = 'Mounted with success'
+
+        self.db.insert(
+            self.config['db_name_log_record'], {
+                'backup_id': self.pk,
+                'log': msg,
+                'success': True,
+                'log_datetime': 'now()'
+            }
+        )
         self.email_context_success = self.email_context_success \
-            + '- Mounted with success\n'
+            + '- {0}\n'.format(msg)
 
     def umount(self, config):
         try:
@@ -217,6 +240,16 @@ class Pg_Backup():
 
     def backup(self):
         try:
+            column_value = {
+                'name': socket.gethostname(),
+                'percents_completed': 0,
+                'status': 1,
+                'start_backup_datetime': 'now()',
+                'finish_backup_datetime': 'NULL'
+            }
+            self.pk_row = self.db.insert(
+                self.config['db_name_record'], column_value)
+
             self.mount(self.config)
 
             self.insert_config(
