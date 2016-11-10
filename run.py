@@ -10,16 +10,16 @@ BKP_CONFIG = {
     'host_machine': 'localhost',
     'db_password': 'g3n3t1k@',
     'port': '5432',
-    'local_destiny_folder': '/home/genomika/temp_bkp/',
+    'local_destiny_folder': '/home/genomika/temp_bkp_postgres/',
     'server_mount_folder': '/genomikalab/Backups/Bancos/',
-    'DB_IGNORED': ['genomika_cytogen','genomika_gensoft_digitalmed','backup_genomika_bkp','thermo_genomika','template1', 'template0', 'postgres','clingen','genomika_bio','genomika_calcgen','genomika_gensoft','genomika_thermo','genomika_labs'],
+    'DB_IGNORED': ['template1', 'template0', 'postgres'],
     'server_user': 'genomika',
     'server_address': '172.16.225.15',
     'server_password': 'g3n3t1c@',
     'days_delete': 7,
     'folders_to_pass':
     [
-        '/var/www/genomika-collaboration.gensoft/genomika_soft/media'
+        # '/var/www/genomika-collaboration.gensoft/genomika_soft/media'
     ],
     'send_email_success': True
 }
