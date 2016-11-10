@@ -56,5 +56,18 @@ class InsertData():
 
         return pk
 
+    def update(self, db_name, column_value):
+        cur = self.conn.cursor()
+        cur.execute(
+            u"UPDATE {0} SET status={1}, percents_completed={2}, "
+            "finish_backup_datetime={3} WHERE id = {2}".format(
+                db_name,
+                column_value['percents_completed'],
+                column_value['finish_backup_datetime'],
+                column_value['id'],
+                column_value['status'],
+            )
+        )
+
     def close_conn(self):
         self.conn.close()

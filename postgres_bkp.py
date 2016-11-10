@@ -329,14 +329,14 @@ class Pg_Backup():
             self.umount(self.config)
 
             column_value = {
-                'name': socket.gethostname(),
+                'id': self.pk_row,
                 'percents_completed': 100,
                 'status': 2,
-                'start_backup_datetime': 'now()',
                 'finish_backup_datetime': 'now()'
             }
-            self.pk_row = self.db.insert(
+            self.pk_row = self.db.update(
                 self.config['db_name_record'], column_value)
+            self.db.close_conn()
 
             email_ctx_error = self.email_context_error
             email_ctx_success = self.email_context_success
