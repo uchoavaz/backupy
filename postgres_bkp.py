@@ -191,27 +191,11 @@ class Pg_Backup():
 
         self.zip_folder_path = self.bkp_folder_path + '.zip'
         msg = u"Databases backup: {0}".format(bkp_context_success)
-        self.steps_done.append(True)
-        self.db.insert(
-            self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': msg,
-                'success': True,
-                'log_datetime': u'now()'
-            }
-        )
         self.email_context_success = self.email_context_success \
             + "- {0}\n".format(msg)
         if bkp_context_error != []:
             msg = u"No databases backup: {0}".format(bkp_context_error)
-            self.db.insert(
-                self.config['db_name_log_record'], {
-                    'backup_id': self.pk_row,
-                    'log': msg,
-                    'success': False,
-                    'log_datetime': 'now()'
-                }
-            )
+
             self.email_context_error = "- {0}\n".format(
                 msg)
 
@@ -285,8 +269,6 @@ class Pg_Backup():
                 socket.gethostname()) + str(error)
 
     def treat_exception(self, err):
-        import ipdb;ipdb.set_trace()
-
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
