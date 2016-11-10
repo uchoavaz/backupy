@@ -309,7 +309,7 @@ class Pg_Backup():
             self.pk_row = self.db.insert(
                 self.config['db_name_record'], column_value)
 
-            db_name_update = self.config['db_name'] + "_update"
+            db_name_update = self.config['db_name_record'] + "_update"
             column_value = {
                 'id': self.pk_row,
                 'status': 2,
