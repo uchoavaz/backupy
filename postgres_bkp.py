@@ -91,10 +91,27 @@ class Pg_Backup():
                 config['local_destiny_folder'])
             umount = subprocess.call(cmd, shell=True)
             if umount != 0:
-                raise Exception('Could not umount folder')
-
+                msg = 'Could not umount folder'
+                self.db.insert(
+                    self.config['db_name_log_record'], {
+                        'backup_id': self.pk_row,
+                        'log': msg,
+                        'success': False,
+                        'log_datetime': 'now()'
+                    }
+                )
+                raise Exception(msg)
+            msg = 'Umounted with success'
+            self.db.insert(
+                self.config['db_name_log_record'], {
+                    'backup_id': self.pk_row,
+                    'log': msg,
+                    'success': True,
+                    'log_datetime': 'now()'
+                }
+            )
             self.email_context_success = self.email_context_success \
-                + '- Umounted with success\n'
+                + '- {0}\n'.format(msg)
         except Exception as err:
             self.treat_exception(err)
 
@@ -170,13 +187,29 @@ class Pg_Backup():
             self.treat_exception(err)
 
         self.zip_folder_path = self.bkp_folder_path + '.zip'
-
+        msg = "Databases's backup: {0}".format(bkp_context_success)
+        self.db.insert(
+            self.config['db_name_log_record'], {
+                'backup_id': self.pk_row,
+                'log': msg,
+                'success': True,
+                'log_datetime': 'now()'
+            }
+        )
         self.email_context_success = self.email_context_success \
-            + "- Databases's backup: {0}\n".format(
-                bkp_context_success)
+            + "- {0}\n".format(msg)
         if bkp_context_error != []:
-            self.email_context_error = "- No databases's backup: {0}\n".format(
-                bkp_context_error)
+            msg = "No databases's backup: {0}".format(bkp_context_error)
+            self.db.insert(
+                self.config['db_name_log_record'], {
+                    'backup_id': self.pk_row,
+                    'log': msg,
+                    'success': False,
+                    'log_datetime': 'now()'
+                }
+            )
+            self.email_context_error = "- {0}\n".format(
+                msg)
 
     def create_folder(self, folder_path):
         host_name = socket.gethostname()
@@ -213,14 +246,28 @@ class Pg_Backup():
                 bkp_context_error.append(folder_name)
             else:
                 bkp_context_success.append(folder_name)
-
+        msg = "Folders synced: {0}".format(bkp_context_success)
+        self.db.insert(
+            self.config['db_name_log_record'], {
+                'backup_id': self.pk_row,
+                'log': msg,
+                'success': True,
+                'log_datetime': 'now()'
+            }
+        )
         self.email_context_success = self.email_context_success \
-            + '- Folders synced: {0}\n'.format(
-                bkp_context_success)
+            + '- {0}\n'.format(msg)
         if bkp_context_error != []:
-
-            raise Exception(' Sync with error: {0}'.format(
-                bkp_context_error))
+            msg = "Sync with error: {0}".format(bkp_context_error)
+            self.db.insert(
+                self.config['db_name_log_record'], {
+                    'backup_id': self.pk_row,
+                    'log': msg,
+                    'success': False,
+                    'log_datetime': 'now()'
+                }
+            )
+            raise Exception(' {0}'.format(msg))
 
     def dispatch_email(self, email_context):
         try:
@@ -280,6 +327,16 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
+
+            column_value = {
+                'name': socket.gethostname(),
+                'percents_completed': 100,
+                'status': 2,
+                'start_backup_datetime': 'now()',
+                'finish_backup_datetime': 'now()'
+            }
+            self.pk_row = self.db.insert(
+                self.config['db_name_record'], column_value)
 
             email_ctx_error = self.email_context_error
             email_ctx_success = self.email_context_success
