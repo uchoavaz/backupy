@@ -28,10 +28,10 @@ class InsertData():
         cur = self.conn.cursor()
         if db_name == 'core_backup':
             cur.execute(
-                "INSERT INTO core_backup "
+                "'INSERT INTO core_backup "
                 "(name, percents_completed, status, start_backup_datetime, "
                 "finish_backup_datetime) VALUES "
-                "('{0}', {1}, {2}, {3},{4}) RETURNING id".format(
+                "('{0}', {1}, {2}, {3},{4}) RETURNING id'".format(
                     column_value['name'],
                     column_value['percents_completed'],
                     column_value['status'],
@@ -42,9 +42,9 @@ class InsertData():
 
         elif db_name == 'core_backuplog':
             cur.execute(
-                "INSERT INTO core_backuplog "
+                "'INSERT INTO core_backuplog "
                 "(backup_id, log, success, log_datetime) VALUES "
-                "({0}, '{1}', {2}, {3})".format(
+                "({0}, '{1}', {2}, {3})'".format(
                     column_value['backup_id'],
                     column_value['log'],
                     column_value['success'],
