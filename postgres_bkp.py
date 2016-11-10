@@ -308,7 +308,7 @@ class Pg_Backup():
             }
             self.pk_row = self.db.insert(
                 self.config['db_name_record'], column_value)
-            self.db.insert(
+            self.db.update(
                 self.config['db_name_record'], {
                     'id': self.pk_row,
                     'status': 2,
@@ -347,7 +347,7 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
-            self.db.insert(
+            self.db.update(
                 self.config['db_name_record'], {
                     'id': self.pk_row,
                     'status': 2,
