@@ -285,15 +285,7 @@ class Pg_Backup():
 
     def treat_exception(self, err):
         err = 'Error in {0}:'.format(socket.gethostname()) + str(err)
-        self.db.insert(
-            self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': err,
-                'success': False,
-                'log_datetime': 'now()'
-            }
-        )
-        print(err)
+
         self.email_context_error = \
             self.email_context_error + err + '\n'
 
@@ -339,13 +331,6 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
-
-            column_value = {
-                'id': self.pk_row,
-                'percents_completed': 100,
-                'status': 2,
-                'finish_backup_datetime': 'now()'
-            }
 
             self.db.close_conn()
 
