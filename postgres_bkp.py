@@ -309,15 +309,6 @@ class Pg_Backup():
             self.pk_row = self.db.insert(
                 self.config['db_name_record'], column_value)
 
-            self.db.update(
-                self.config['db_name_record'], {
-                    'id': self.pk_row,
-                    'status': 3,
-                    'percents_completed': 100,
-                    'finish_backup_datetime': 'now()'
-                }
-
-            )
             self.mount(self.config)
 
             self.insert_config(
@@ -348,7 +339,15 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
+            self.db.update(
+                self.config['db_name_record'], {
+                    'id': self.pk_row,
+                    'status': 3,
+                    'percents_completed': 100,
+                    'finish_backup_datetime': 'now()'
+                }
 
+            )
             self.db.close_conn()
 
             email_ctx_error = self.email_context_error
