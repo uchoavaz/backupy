@@ -284,6 +284,8 @@ class Pg_Backup():
                 socket.gethostname()) + str(error)
 
     def treat_exception(self, err):
+        import ipdb;ipdb.set_trace()
+
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -339,7 +341,6 @@ class Pg_Backup():
             self.treat_exception(err)
 
         finally:
-            import ipdb;ipdb.set_trace()
             self.umount(self.config)
 
             column_value = {
