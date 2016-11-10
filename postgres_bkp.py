@@ -94,14 +94,6 @@ class Pg_Backup():
             import ipdb;ipdb.set_trace()
             if umount != 0:
                 msg = 'Could not umount folder'
-                self.db.insert(
-                    self.config['db_name_log_record'], {
-                        'backup_id': self.pk_row,
-                        'log': msg,
-                        'success': False,
-                        'log_datetime': 'now()'
-                    }
-                )
                 raise Exception(msg)
             msg = 'Umounted with success'
             self.steps_done.append(True)
@@ -236,26 +228,10 @@ class Pg_Backup():
                 bkp_context_success.append(folder_name)
         msg = "Folders synced: {0}".format(bkp_context_success)
         self.steps_done.append(True)
-        self.db.insert(
-            self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': msg,
-                'success': True,
-                'log_datetime': 'now()'
-            }
-        )
         self.email_context_success = self.email_context_success \
             + '- {0}\n'.format(msg)
         if bkp_context_error != []:
             msg = "Sync with error: {0}".format(bkp_context_error)
-            self.db.insert(
-                self.config['db_name_log_record'], {
-                    'backup_id': self.pk_row,
-                    'log': msg,
-                    'success': False,
-                    'log_datetime': 'now()'
-                }
-            )
             raise Exception(' {0}'.format(msg))
 
     def dispatch_email(self, email_context):
