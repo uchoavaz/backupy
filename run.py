@@ -12,7 +12,7 @@ BKP_CONFIG = {
     'port': '5432',
     'local_destiny_folder': '/home/genomika/temp/',
     'server_mount_folder': '/genomikalab/Backups/Bancos/',
-    'DB_IGNORED': ['template1', 'template0', 'postgres','clingen','genomika_bio','genomika_calcgen','genomika_gensoft','genomika_thermo','genomika_labs'],
+    'DB_IGNORED': ['thermo_genomika',template1', 'template0', 'postgres','clingen','genomika_bio','genomika_calcgen','genomika_gensoft','genomika_thermo','genomika_labs'],
     'server_user': 'genomika',
     'server_address': '172.16.225.15',
     'server_password': 'g3n3t1c@',
