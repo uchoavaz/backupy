@@ -44,7 +44,7 @@ class InsertData():
             cur.execute(
                 u"INSERT INTO"" core_backuplog "
                 "(backup_id, log, success, log_datetime) VALUES "
-                "({0}, "{1}", {2}, {3}) RETURNING id".format(
+                "({0}, '{1}', {2}, {3}) RETURNING id".format(
                     column_value['backup_id'],
                     column_value['log'],
                     column_value['success'],
