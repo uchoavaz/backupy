@@ -40,7 +40,6 @@ class InsertData():
                 )
             )
         elif db_name == 'core_backuplog':
-            import ipdb;ipdb.set_trace()
 
             cur.execute(
                 u"INSERT INTO"" core_backuplog "
@@ -61,7 +60,7 @@ class InsertData():
         cur = self.conn.cursor()
         cur.execute(
             u"UPDATE {0} SET status={1}, percents_completed={2}, "
-            "finish_backup_datetime={3} WHERE id = {2}".format(
+            "finish_backup_datetime={3} WHERE id={2}".format(
                 db_name,
                 column_value['percents_completed'],
                 column_value['finish_backup_datetime'],
