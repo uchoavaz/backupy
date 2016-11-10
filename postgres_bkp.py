@@ -339,6 +339,7 @@ class Pg_Backup():
             self.treat_exception(err)
 
         finally:
+            import ipdb;ipdb.set_trace()
             self.umount(self.config)
 
             column_value = {
