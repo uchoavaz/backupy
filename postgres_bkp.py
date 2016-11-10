@@ -91,6 +91,7 @@ class Pg_Backup():
             cmd = self.commands['umount'].format(
                 config['local_destiny_folder'])
             umount = subprocess.call(cmd, shell=True)
+            import ipdb;ipdb.set_trace()
             if umount != 0:
                 msg = 'Could not umount folder'
                 self.db.insert(
