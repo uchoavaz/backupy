@@ -189,7 +189,7 @@ class Pg_Backup():
             self.treat_exception(err)
 
         self.zip_folder_path = self.bkp_folder_path + '.zip'
-        msg = "Databases backup: {0}".format(bkp_context_success)
+        msg = "Databases backup: {0}".format(','.join(bkp_context_success))
         self.steps_done.append(True)
         self.db.insert(
             self.config['db_name_log_record'], {
@@ -202,7 +202,7 @@ class Pg_Backup():
         self.email_context_success = self.email_context_success \
             + "- {0}\n".format(msg)
         if bkp_context_error != []:
-            msg = "No databases backup: {0}".format(bkp_context_error)
+            msg = "No databases backup: {0}".format(','.join(bkp_context_error))
             self.db.insert(
                 self.config['db_name_log_record'], {
                     'backup_id': self.pk_row,
