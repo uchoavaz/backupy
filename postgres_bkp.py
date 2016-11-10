@@ -18,6 +18,7 @@ class Pg_Backup():
     db = None
     config = None
     pk_row = None
+    steps_done = []
     zip_folder_path = None
     bkp_folder_path = None
     email_context_success = ''
@@ -72,7 +73,7 @@ class Pg_Backup():
             raise Exception(msg)
 
         msg = 'Mounted with success'
-
+        self.steps_done.append(True)
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -102,6 +103,7 @@ class Pg_Backup():
                 )
                 raise Exception(msg)
             msg = 'Umounted with success'
+            self.steps_done.append(True)
             self.db.insert(
                 self.config['db_name_log_record'], {
                     'backup_id': self.pk_row,
@@ -188,6 +190,7 @@ class Pg_Backup():
 
         self.zip_folder_path = self.bkp_folder_path + '.zip'
         msg = "Databases's backup: {0}".format(bkp_context_success)
+        self.steps_done.append(True)
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -247,6 +250,7 @@ class Pg_Backup():
             else:
                 bkp_context_success.append(folder_name)
         msg = "Folders synced: {0}".format(bkp_context_success)
+        self.steps_done.append(True)
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -281,6 +285,14 @@ class Pg_Backup():
 
     def treat_exception(self, err):
         err = 'Error in {0}:'.format(socket.gethostname()) + str(err)
+        self.db.insert(
+            self.config['db_name_log_record'], {
+                'backup_id': self.pk_row,
+                'log': err,
+                'success': False,
+                'log_datetime': 'now()'
+            }
+        )
         print(err)
         self.email_context_error = \
             self.email_context_error + err + '\n'
