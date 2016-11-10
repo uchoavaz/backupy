@@ -39,8 +39,9 @@ class InsertData():
                     column_value['finish_backup_datetime']
                 )
             )
-
         elif db_name == 'core_backuplog':
+            import ipdb;ipdb.set_trace()
+
             cur.execute(
                 u"INSERT INTO"" core_backuplog "
                 "(backup_id, log, success, log_datetime) VALUES "

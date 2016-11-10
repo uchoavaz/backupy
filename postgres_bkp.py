@@ -91,20 +91,19 @@ class Pg_Backup():
             cmd = self.commands['umount'].format(
                 config['local_destiny_folder'])
             umount = subprocess.call(cmd, shell=True)
-            import ipdb;ipdb.set_trace()
             if umount != 0:
                 msg = 'Could not umount folder'
                 raise Exception(msg)
             msg = 'Umounted with success'
             self.steps_done.append(True)
-            self.db.insert(
-                self.config['db_name_log_record'], {
-                    'backup_id': self.pk_row,
-                    'log': msg,
-                    'success': True,
-                    'log_datetime': 'now()'
-                }
-            )
+            column_value = {
+                'backup_id': self.pk_row,
+                'log': msg,
+                'success': True,
+                'log_datetime': u'now()'
+            }
+            import ipdb;ipdb.set_trace()
+            self.db.insert(self.config['db_name_log_record'], column_value)
             self.email_context_success = self.email_context_success \
                 + '- {0}\n'.format(msg)
         except Exception as err:
