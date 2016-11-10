@@ -58,6 +58,7 @@ class InsertData():
         return pk
 
     def update(self, db_name, column_value):
+        import ipdb;ipdb.set_trace()
         self.cur.execute(
             u"UPDATE {0} SET status={1}, percents_completed={2}, "
             "finish_backup_datetime={3} WHERE id={2}".format(
