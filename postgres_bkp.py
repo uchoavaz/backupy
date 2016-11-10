@@ -196,7 +196,7 @@ class Pg_Backup():
                 'backup_id': self.pk_row,
                 'log': msg,
                 'success': True,
-                'log_datetime': 'now()'
+                'log_datetime': u'now()'
             }
         )
         self.email_context_success = self.email_context_success \
@@ -208,7 +208,7 @@ class Pg_Backup():
                     'backup_id': self.pk_row,
                     'log': msg,
                     'success': False,
-                    'log_datetime': 'now()'
+                    'log_datetime': u'now()'
                 }
             )
             self.email_context_error = "- {0}\n".format(
