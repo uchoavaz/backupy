@@ -249,7 +249,7 @@ class Pg_Backup():
                 bkp_context_error.append(folder_name)
             else:
                 bkp_context_success.append(folder_name)
-        msg = "Folders synced: {0}".format(bkp_context_success)
+        msg = "Folders synced: {0}".format(','.join(bkp_context_success))
         self.steps_done.append(True)
         self.db.insert(
             self.config['db_name_log_record'], {
@@ -262,7 +262,7 @@ class Pg_Backup():
         self.email_context_success = self.email_context_success \
             + '- {0}\n'.format(msg)
         if bkp_context_error != []:
-            msg = "Sync with error: {0}".format(bkp_context_error)
+            msg = "Sync with error: {0}".format(','.join(bkp_context_error))
             self.db.insert(
                 self.config['db_name_log_record'], {
                     'backup_id': self.pk_row,
