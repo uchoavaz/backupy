@@ -308,6 +308,7 @@ class Pg_Backup():
             }
             self.pk_row = self.db.insert(
                 self.config['db_name_record'], column_value)
+            import ipdb;ipdb.set_trace()
             self.db.update(
                 self.config['db_name_record'], {
                     'id': self.pk_row,
