@@ -309,6 +309,14 @@ class Pg_Backup():
             self.pk_row = self.db.insert(
                 self.config['db_name_record'], column_value)
 
+            db_name_update = self.config['db_name'] + "_update"
+            column_value = {
+                'id': self.pk_row,
+                'status': 2,
+                'percents_completed': 100,
+                'finish_backup_datetime': 'now()',
+            }
+            self.db.insert(db_name_update, column_value)
             self.mount(self.config)
 
             self.insert_config(
