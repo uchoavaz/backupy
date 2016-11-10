@@ -10,7 +10,7 @@ BKP_CONFIG = {
     'host_machine': 'localhost',
     'db_password': 'g3n3t1k@',
     'port': '5432',
-    'local_destiny_folder': '/home/genomika/temp/',
+    'local_destiny_folder': '/home/genomika/temp_bkp/',
     'server_mount_folder': '/genomikalab/Backups/Bancos/',
     'DB_IGNORED': ['genomika_cytogen','genomika_gensoft_digitalmed','backup_genomika_bkp','thermo_genomika','template1', 'template0', 'postgres','clingen','genomika_bio','genomika_calcgen','genomika_gensoft','genomika_thermo','genomika_labs'],
     'server_user': 'genomika',
