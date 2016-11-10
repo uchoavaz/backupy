@@ -5,11 +5,9 @@ from decouple import config
 
 class InsertData():
     conn = None
-    cur = None
 
     def __init__(self):
         self.init_db_config(config)
-        self.cur = self.conn.cursor()
 
     def init_db_config(self, config):
         try:
@@ -27,8 +25,9 @@ class InsertData():
             print ("Erro ao conectar a base de dados")
 
     def insert(self, db_name, column_value):
+        cur = self.conn.cursor()
         if db_name == 'core_backup':
-            self.cur.execute(
+            cur.execute(
                 u"INSERT INTO"" core_backup "
                 "(name, percents_completed, status, start_backup_datetime, "
                 "finish_backup_datetime) VALUES "
@@ -42,7 +41,7 @@ class InsertData():
             )
         elif db_name == 'core_backuplog':
 
-            self.cur.execute(
+            cur.execute(
                 u"INSERT INTO"" core_backuplog "
                 "(backup_id, log, success, log_datetime) VALUES "
                 "({0}, '{1}', {2}, {3}) RETURNING id".format(
@@ -52,13 +51,14 @@ class InsertData():
                     column_value['log_datetime']
                 )
             )
-        pk = self.cur.fetchone()[0]
+        pk = cur.fetchone()[0]
         self.conn.commit()
 
         return pk
 
     def update(self, db_name, column_value):
-        self.cur.execute(
+        cur = self.conn.cursor()
+        cur.execute(
             u"UPDATE {0} SET status={1}, percents_completed={2}, "
             "finish_backup_datetime={3} WHERE id={2}".format(
                 db_name,
