@@ -1,7 +1,6 @@
 
 # -*- coding: utf-8 -*-
 from database.insert_data import InsertData
-from unicodedata import normalize
 from utils import zip_folder
 from utils import delete_folder
 from utils import get_last_folder_path
@@ -355,9 +354,6 @@ class Pg_Backup():
         percentage = total_done / self.config['total_steps']
         percentage = percentage * 100.0
         return percentage
-
-    def remover_acentos(txt, codif='utf-8'):
-        return normalize('NFKD', txt.decode(codif)).encode('ASCII', 'ignore')
 
     def backup(self):
         try:
