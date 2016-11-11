@@ -21,7 +21,6 @@ BKP_CONFIG = {
         'genomika_cytogen',
         'genomika_gensoft',
         'genomika_gensoft_digitalmed',
-        'genomika_labs',
         'genomika_thermo',
         'thermo_genomika'
     ],

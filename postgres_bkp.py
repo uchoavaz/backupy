@@ -74,6 +74,7 @@ class Pg_Backup():
 
         msg = 'Mounted with success'
         self.steps_done.append(True)
+        import ipdb;ipdb.set_trace()
         self.db.update(
             self.config['db_name_record'], {
                 'id': self.pk_row,
