@@ -336,6 +336,7 @@ class Pg_Backup():
                 socket.gethostname()) + str(error)
 
     def treat_exception(self, err):
+        import ipdb;ipdb.set_trace()
         err = remover_acentos(str(err).replace("'", '_'))
         self.db.insert(
             self.config['db_name_log_record'], {
