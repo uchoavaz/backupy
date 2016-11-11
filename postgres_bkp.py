@@ -74,7 +74,6 @@ class Pg_Backup():
 
         msg = 'Mounted with success'
         self.steps_done.append(True)
-        import ipdb;ipdb.set_trace()
         self.db.update(
             self.config['db_name_record'], {
                 'id': self.pk_row,
@@ -340,7 +339,7 @@ class Pg_Backup():
     def count_percentage(self):
         total_done = len(self.steps_done)
         percentage = total_done / self.config['total_steps']
-        percentage = percentage * 100
+        percentage = percentage * 100.0
         return percentage
 
     def backup(self):
@@ -393,10 +392,10 @@ class Pg_Backup():
                     'percents_completed': 100,
                     'finish_backup_datetime': 'now()'
                 }
-
             )
-            if self.count_percentage() == 100:
-                status = 3
+            status = 3
+            if self.count_percentage() == 100.0:
+                status = 2
 
             self.db.update(
                 self.config['db_name_record'], {

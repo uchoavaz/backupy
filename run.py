@@ -3,26 +3,19 @@ from postgres_bkp import Pg_Backup
 
 BKP_CONFIG = {
     'db_name_record': 'core_backup',
-    'total_steps': 4,
+    'total_steps': 4.0,
     'db_name_log_record': 'core_backuplog',
     'user_password': 'g3n0m1k@',
     'pg_user': 'genomika',
     'host_machine': 'localhost',
     'db_password': 'g3n3t1k@',
     'port': '5432',
-    'local_destiny_folder': '/home/genomika/temp_bkp/',
+    'local_destiny_folder': '/home/genomika/temp/',
     'server_mount_folder': '/genomikalab/Backups/Bancos/',
     'DB_IGNORED': [
         'template1',
         'template0',
-        'postgres',
-        'genomika_bio',
-        'genomika_calcgen',
-        'genomika_cytogen',
-        'genomika_gensoft',
-        'genomika_gensoft_digitalmed',
-        'genomika_thermo',
-        'thermo_genomika'
+        'postgres'
     ],
     'server_user': 'genomika',
     'server_address': '172.16.225.15',
