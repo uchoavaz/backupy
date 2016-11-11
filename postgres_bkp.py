@@ -53,7 +53,6 @@ class Pg_Backup():
         self.email_config = email_config
 
     def mount(self, config):
-        import ipdb;ipdb.set_trace()
         msg = "Mounting"
         self.pk_log_row = self.db.insert(
             self.config['db_name_log_record'], {
@@ -74,15 +73,6 @@ class Pg_Backup():
         mount = subprocess.call(cmd, shell=True)
         if mount != 0:
             msg = ' Could not mount server'
-            self.db.update(
-                self.config['db_name_record'], {
-                    'id': self.pk_log_row,
-                    'status': 1,
-                    'percents_completed': self.count_percentage(),
-                    'finish_backup_datetime': 'NULL'
-                }
-
-            )
             raise Exception(msg)
 
         msg = 'Mounted with success'
@@ -110,23 +100,33 @@ class Pg_Backup():
 
     def umount(self, config):
         try:
+            msg = "Uounting"
+            self.pk_log_row = self.db.insert(
+                self.config['db_name_log_record'], {
+                    'backup_id': self.pk_row,
+                    'log': msg,
+                    'status': 1,
+                    'log_datetime': 'now()'
+                }
+            )
             os.chdir(get_last_folder_path(config['local_destiny_folder']))
             cmd = self.commands['umount'].format(
                 config['local_destiny_folder'])
             umount = subprocess.call(cmd, shell=True)
             if umount != 0:
                 msg = 'Could not umount folder'
-                self.db.insert(
-                    self.config['db_name_log_record'], {
-                        'backup_id': self.pk_row,
-                        'log': msg,
-                        'success': False,
-                        'log_datetime': 'now()'
-                    }
-                )
                 raise Exception(msg)
+
             msg = 'Umounted with success'
             self.steps_done.append(True)
+            self.db.update(
+                self.config['db_name_log_record'], {
+                    'id': self.pk_log_row,
+                    'status': 2,
+                    'log': msg
+                }
+
+            )
             self.db.update(
                 self.config['db_name_record'], {
                     'id': self.pk_row,
@@ -136,14 +136,7 @@ class Pg_Backup():
                 }
 
             )
-            self.db.insert(
-                self.config['db_name_log_record'], {
-                    'backup_id': self.pk_row,
-                    'log': msg,
-                    'success': True,
-                    'log_datetime': 'now()'
-                }
-            )
+
             self.email_context_success = self.email_context_success \
                 + '- {0}\n'.format(msg)
         except Exception as err:
@@ -178,6 +171,15 @@ class Pg_Backup():
         return databases
 
     def create_bkp_files(self, databases, config):
+        msg = "Pulling databases"
+        self.db.update(
+            self.config['db_name_log_record'], {
+                'id': self.pk_log_row,
+                'status': 1,
+                'log': msg
+            }
+
+        )
         bkp_context_success = []
         bkp_context_error = []
         for database in databases:
@@ -224,6 +226,14 @@ class Pg_Backup():
         msg = "Databases backup: {0}".format(','.join(bkp_context_success))
         self.steps_done.append(True)
         self.db.update(
+            self.config['db_name_log_record'], {
+                'id': self.pk_log_row,
+                'status': 1,
+                'log': msg
+            }
+
+        )
+        self.db.update(
             self.config['db_name_record'], {
                 'id': self.pk_row,
                 'status': 1,
@@ -232,25 +242,18 @@ class Pg_Backup():
             }
 
         )
-        self.db.insert(
-            self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': msg,
-                'success': True,
-                'log_datetime': 'now()'
-            }
-        )
+
         self.email_context_success = self.email_context_success \
             + "- {0}\n".format(msg)
         if bkp_context_error != []:
             msg = "No databases backup: {0}".format(','.join(bkp_context_error))
-            self.db.insert(
+            self.db.update(
                 self.config['db_name_log_record'], {
-                    'backup_id': self.pk_row,
-                    'log': msg,
-                    'success': False,
-                    'log_datetime': 'now()'
+                    'id': self.pk_log_row,
+                    'status': 3,
+                    'log': msg
                 }
+
             )
             self.email_context_error = "- {0}\n".format(
                 msg)
@@ -274,6 +277,15 @@ class Pg_Backup():
                 raise Exception("Could not create backup folder")
 
     def sync(self, config):
+        msg = "Synchronizing folders"
+        self.db.update(
+            self.config['db_name_log_record'], {
+                'id': self.pk_log_row,
+                'status': 1,
+                'log': msg
+            }
+
+        )
         bkp_context_success = []
         bkp_context_error = []
         for path in config['folders_to_pass']:
@@ -297,6 +309,14 @@ class Pg_Backup():
         msg = "Folders synced: {0}".format(folders_synced)
         self.steps_done.append(True)
         self.db.update(
+            self.config['db_name_log_record'], {
+                'id': self.pk_log_row,
+                'status': 2,
+                'log': msg
+            }
+
+        )
+        self.db.update(
             self.config['db_name_record'], {
                 'id': self.pk_row,
                 'status': 1,
@@ -305,25 +325,18 @@ class Pg_Backup():
             }
 
         )
-        self.db.insert(
-            self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': msg,
-                'success': True,
-                'log_datetime': 'now()'
-            }
-        )
+
         self.email_context_success = self.email_context_success \
             + '- {0}\n'.format(msg)
         if bkp_context_error != []:
             msg = "Sync with error: {0}".format(','.join(bkp_context_error))
-            self.db.insert(
+            self.db.update(
                 self.config['db_name_log_record'], {
-                    'backup_id': self.pk_row,
-                    'log': msg,
-                    'success': False,
-                    'log_datetime': 'now()'
+                    'id': self.pk_log_row,
+                    'status': 2,
+                    'log': msg
                 }
+
             )
             raise Exception(' {0}'.format(msg))
 
@@ -339,13 +352,13 @@ class Pg_Backup():
 
     def treat_exception(self, err):
         err = remover_acentos(str(err).replace("'", '_'))
-        self.db.insert(
+        self.db.update(
             self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': err,
-                'success': False,
-                'log_datetime': 'now()'
+                'id': self.pk_log_row,
+                'status': 3,
+                'log': err
             }
+
         )
         err = 'Error in {0}:'.format(socket.gethostname()) + str(err)
         self.email_context_error = \
