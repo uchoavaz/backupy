@@ -228,7 +228,7 @@ class Pg_Backup():
         self.db.update(
             self.config['db_name_log_record'], {
                 'id': self.pk_log_row,
-                'status': 1,
+                'status': 2,
                 'log': msg
             }
 
