@@ -53,6 +53,7 @@ class Pg_Backup():
         self.email_config = email_config
 
     def mount(self, config):
+        import ipdb;ipdb.set_trace()
         msg = "Mounting"
         self.pk_log_row = self.db.insert(
             self.config['db_name_log_record'], {
@@ -336,7 +337,6 @@ class Pg_Backup():
                 socket.gethostname()) + str(error)
 
     def treat_exception(self, err):
-        import ipdb;ipdb.set_trace()
         err = remover_acentos(str(err).replace("'", '_'))
         self.db.insert(
             self.config['db_name_log_record'], {
