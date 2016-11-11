@@ -58,16 +58,26 @@ class InsertData():
         return pk
 
     def update(self, db_name, column_value):
-        self.cur.execute(
-            u"UPDATE {0} SET status={1}, percents_completed={2}, "
-            "finish_backup_datetime={3} WHERE id={4}".format(
-                db_name,
-                column_value['status'],
-                column_value['percents_completed'],
-                column_value['finish_backup_datetime'],
-                column_value['id'],
+        if db_name == 'core_backup':
+            self.cur.execute(
+                u"UPDATE {0} SET status={1}, percents_completed={2}, "
+                "finish_backup_datetime={3} WHERE id={4}".format(
+                    db_name,
+                    column_value['status'],
+                    column_value['percents_completed'],
+                    column_value['finish_backup_datetime'],
+                    column_value['id'],
+                )
             )
-        )
+        if db_name == 'core_backuplog':
+            self.cur.execute(
+                u"UPDATE {0} SET status={1}, log={2} WHERE id={3}".format(
+                    db_name,
+                    column_value['status'],
+                    column_value['log'],
+                    column_value['id'],
+                )
+            )
         self.conn.commit()
 
     def close_conn(self):

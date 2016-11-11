@@ -7,6 +7,7 @@ from utils import get_last_folder_path
 from utils import get_last_folder
 from utils import delete_old_files
 from utils import clear_name
+from utils import remover_acentos
 from email import Email
 import socket
 import subprocess
@@ -18,6 +19,7 @@ class Pg_Backup():
     db = None
     config = None
     pk_row = None
+    pk_log_row = None
     steps_done = []
     zip_folder_path = None
     bkp_folder_path = None
@@ -51,6 +53,15 @@ class Pg_Backup():
         self.email_config = email_config
 
     def mount(self, config):
+        msg = "Mounting"
+        self.pk_log_row = self.db.insert(
+            self.config['db_name_log_record'], {
+                'backup_id': self.pk_row,
+                'log': msg,
+                'status': 1,
+                'log_datetime': 'now()'
+            }
+        )
         cmd = self.commands['mount'].format(
             config['user_password'],
             config['server_address'],
@@ -73,6 +84,14 @@ class Pg_Backup():
             raise Exception(msg)
 
         msg = 'Mounted with success'
+        self.db.update(
+            self.config['db_name_log_record'], {
+                'id': self.pk_row,
+                'status': 2,
+                'log': msg
+            }
+
+        )
         self.steps_done.append(True)
         self.db.update(
             self.config['db_name_record'], {
@@ -83,14 +102,7 @@ class Pg_Backup():
             }
 
         )
-        self.db.insert(
-            self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': msg,
-                'success': True,
-                'log_datetime': 'now()'
-            }
-        )
+
         self.email_context_success = self.email_context_success \
             + '- {0}\n'.format(msg)
 
@@ -324,7 +336,7 @@ class Pg_Backup():
                 socket.gethostname()) + str(error)
 
     def treat_exception(self, err):
-        err = str(err).unicode('utf-8')
+        err = remover_acentos(err).replace("'", '_')
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -367,10 +379,19 @@ class Pg_Backup():
             folders_deleted = delete_old_files(
                 self.config['days_delete'],
                 get_last_folder_path(self.bkp_folder_path))
-
+            msg = "Old folders deleted: {0}".format(folders_deleted)
+            self.steps_done.append(True)
+            self.db.insert(
+                self.config['db_name_log_record'], {
+                    'backup_id': self.pk_row,
+                    'log': msg,
+                    'success': True,
+                    'log_datetime': 'now()'
+                }
+            )
             self.email_context_success = self.email_context_success \
-                + '- Old folders deleted: {0}\n'.format(
-                    folders_deleted)
+                + '- {0}\n'.format(
+                    msg)
 
             self.sync(self.config)
 
@@ -386,7 +407,6 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
-            import ipdb;ipdb.set_trace()
             status = 3
             if self.count_percentage() == 100.0:
                 status = 2

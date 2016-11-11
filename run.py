@@ -3,7 +3,7 @@ from postgres_bkp import Pg_Backup
 
 BKP_CONFIG = {
     'db_name_record': 'core_backup',
-    'total_steps': 4.0,
+    'total_steps': 6.0,
     'db_name_log_record': 'core_backuplog',
     'user_password': 'g3n0m1k@',
     'pg_user': 'genomika',
@@ -23,7 +23,7 @@ BKP_CONFIG = {
     'days_delete': 7,
     'folders_to_pass':
     [
-        '/var/www/genomika-collaboration.gensoft/genomika_soft/media'
+        # '/var/www/genomika-collaboration.gensoft/genomika_soft/media'
     ],
     'send_email_success': True
 }
