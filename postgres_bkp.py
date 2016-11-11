@@ -377,7 +377,6 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
-            import ipdb;ipdb.set_trace()
             status = 3
             if self.count_percentage() == 100.0:
                 status = 2
