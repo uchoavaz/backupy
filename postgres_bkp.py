@@ -100,7 +100,7 @@ class Pg_Backup():
 
     def umount(self, config):
         try:
-            msg = "Uounting"
+            msg = "Umounting"
             self.pk_log_row = self.db.insert(
                 self.config['db_name_log_record'], {
                     'backup_id': self.pk_row,
@@ -172,13 +172,13 @@ class Pg_Backup():
 
     def create_bkp_files(self, databases, config):
         msg = "Pulling databases"
-        self.db.update(
+        self.pk_log_row = self.db.insert(
             self.config['db_name_log_record'], {
-                'id': self.pk_log_row,
+                'backup_id': self.pk_row,
+                'log': msg,
                 'status': 1,
-                'log': msg
+                'log_datetime': 'now()'
             }
-
         )
         bkp_context_success = []
         bkp_context_error = []
@@ -278,13 +278,13 @@ class Pg_Backup():
 
     def sync(self, config):
         msg = "Synchronizing folders"
-        self.db.update(
+        self.pk_log_row = self.db.insert(
             self.config['db_name_log_record'], {
-                'id': self.pk_log_row,
+                'backup_id': self.pk_row,
+                'log': msg,
                 'status': 1,
-                'log': msg
+                'log_datetime': 'now()'
             }
-
         )
         bkp_context_success = []
         bkp_context_error = []
@@ -391,18 +391,37 @@ class Pg_Backup():
                 self.config['pg_user'], self.config['host_machine'])
 
             self.create_bkp_files(db_list, self.config)
-            folders_deleted = delete_old_files(
-                self.config['days_delete'],
-                get_last_folder_path(self.bkp_folder_path))
-            msg = "Old folders deleted: {0}".format(folders_deleted)
-            self.steps_done.append(True)
-            self.db.insert(
+            msg = "Deleting old folders"
+            self.pk_log_row = self.db.insert(
                 self.config['db_name_log_record'], {
                     'backup_id': self.pk_row,
                     'log': msg,
-                    'success': True,
+                    'status': 1,
                     'log_datetime': 'now()'
                 }
+            )
+
+            folders_deleted = delete_old_files(
+                self.config['days_delete'],
+                get_last_folder_path(self.bkp_folder_path))
+
+            msg = "Old folders deleted: {0}".format(folders_deleted)
+            self.steps_done.append(True)
+            self.db.update(
+                self.config['db_name_log_record'], {
+                    'id': self.pk_log_row,
+                    'status': 2,
+                    'log': msg
+                }
+            )
+            self.db.update(
+                self.config['db_name_record'], {
+                    'id': self.pk_row,
+                    'status': 1,
+                    'percents_completed': self.count_percentage(),
+                    'finish_backup_datetime': 'NULL'
+                }
+
             )
             self.email_context_success = self.email_context_success \
                 + '- {0}\n'.format(
