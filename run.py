@@ -10,7 +10,7 @@ BKP_CONFIG = {
     'host_machine': 'localhost',
     'db_password': 'g3n3t1k@',
     'port': '5432',
-    'local_destiny_folder': '/home/genomika/temp_bkp_postgres/',
+    'local_destiny_folder': '/home/genomika/temp_bkp/',
     'server_mount_folder': '/genomikalab/Backups/Bancos/',
     'DB_IGNORED': [
         'template1',
