@@ -71,7 +71,7 @@ class InsertData():
             )
         if db_name == 'core_backuplog':
             self.cur.execute(
-                u"UPDATE {0} SET status={1}, log={2} WHERE id={3}".format(
+                u"UPDATE {0} SET status={1}, log='{2}' WHERE id={3}".format(
                     db_name,
                     column_value['status'],
                     column_value['log'],
