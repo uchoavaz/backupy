@@ -236,7 +236,7 @@ class Pg_Backup():
         self.db.update(
             self.config['db_name_record'], {
                 'id': self.pk_row,
-                'status': 1,
+                'status': 2,
                 'percents_completed': self.count_percentage(),
                 'finish_backup_datetime': 'NULL'
             }
