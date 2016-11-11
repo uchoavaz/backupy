@@ -385,18 +385,10 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
-            self.db.update(
-                self.config['db_name_record'], {
-                    'id': self.pk_row,
-                    'status': 2,
-                    'percents_completed': 100,
-                    'finish_backup_datetime': 'now()'
-                }
-            )
+            import ipdb;ipdb.set_trace()
             status = 3
             if self.count_percentage() == 100.0:
                 status = 2
-
             self.db.update(
                 self.config['db_name_record'], {
                     'id': self.pk_row,
