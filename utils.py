@@ -61,7 +61,3 @@ def clear_name(name):
     name = name.replace(' ', '').strip()
     if name != '' and reg1 not in name and reg2 not in name:
         return name
-
-
-def remover_acentos(txt, codif='utf-8'):
-    return normalize('NFKD', txt.decode(codif)).encode('ASCII', 'ignore')
