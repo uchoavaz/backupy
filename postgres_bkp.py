@@ -324,6 +324,15 @@ class Pg_Backup():
                 socket.gethostname()) + str(error)
 
     def treat_exception(self, err):
+        err = str(err).unicode('utf-8')
+        self.db.insert(
+            self.config['db_name_log_record'], {
+                'backup_id': self.pk_row,
+                'log': err,
+                'success': False,
+                'log_datetime': 'now()'
+            }
+        )
         err = 'Error in {0}:'.format(socket.gethostname()) + str(err)
         self.email_context_error = \
             self.email_context_error + err + '\n'
@@ -377,6 +386,7 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
+            import ipdb;ipdb.set_trace()
             status = 3
             if self.count_percentage() == 100.0:
                 status = 2
