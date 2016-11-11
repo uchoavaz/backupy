@@ -74,20 +74,21 @@ class Pg_Backup():
         mount = subprocess.call(cmd, shell=True)
         if mount != 0:
             msg = ' Could not mount server'
-            self.db.insert(
-                self.config['db_name_log_record'], {
-                    'backup_id': self.pk_row,
-                    'log': msg,
-                    'success': False,
-                    'log_datetime': 'now()'
+            self.db.update(
+                self.config['db_name_record'], {
+                    'id': self.pk_log_row,
+                    'status': 1,
+                    'percents_completed': self.count_percentage(),
+                    'finish_backup_datetime': 'NULL'
                 }
+
             )
             raise Exception(msg)
 
         msg = 'Mounted with success'
         self.db.update(
             self.config['db_name_log_record'], {
-                'id': self.pk_row,
+                'id': self.pk_log_row,
                 'status': 2,
                 'log': msg
             }
