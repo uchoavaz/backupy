@@ -324,14 +324,6 @@ class Pg_Backup():
                 socket.gethostname()) + str(error)
 
     def treat_exception(self, err):
-        self.db.insert(
-            self.config['db_name_log_record'], {
-                'backup_id': self.pk_row,
-                'log': err,
-                'success': False,
-                'log_datetime': 'now()'
-            }
-        )
         err = 'Error in {0}:'.format(socket.gethostname()) + str(err)
         self.email_context_error = \
             self.email_context_error + err + '\n'
