@@ -74,6 +74,15 @@ class Pg_Backup():
 
         msg = 'Mounted with success'
         self.steps_done.append(True)
+        self.db.update(
+            self.config['db_name_record'], {
+                'id': self.pk_row,
+                'status': 1,
+                'percents_completed': self.count_percentage(),
+                'finish_backup_datetime': 'NULL'
+            }
+
+        )
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -104,6 +113,15 @@ class Pg_Backup():
                 raise Exception(msg)
             msg = 'Umounted with success'
             self.steps_done.append(True)
+            self.db.update(
+                self.config['db_name_record'], {
+                    'id': self.pk_row,
+                    'status': 1,
+                    'percents_completed': self.count_percentage(),
+                    'finish_backup_datetime': 'NULL'
+                }
+
+            )
             self.db.insert(
                 self.config['db_name_log_record'], {
                     'backup_id': self.pk_row,
@@ -191,6 +209,15 @@ class Pg_Backup():
         self.zip_folder_path = self.bkp_folder_path + '.zip'
         msg = "Databases backup: {0}".format(','.join(bkp_context_success))
         self.steps_done.append(True)
+        self.db.update(
+            self.config['db_name_record'], {
+                'id': self.pk_row,
+                'status': 1,
+                'percents_completed': self.count_percentage(),
+                'finish_backup_datetime': 'NULL'
+            }
+
+        )
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -249,8 +276,21 @@ class Pg_Backup():
                 bkp_context_error.append(folder_name)
             else:
                 bkp_context_success.append(folder_name)
-        msg = "Folders synced: {0}".format(','.join(bkp_context_success))
+        folders_synced = ','.join(bkp_context_success)
+
+        if folders_synced == '':
+            folders_synced = '-'
+        msg = "Folders synced: {0}".format(folders_synced)
         self.steps_done.append(True)
+        self.db.update(
+            self.config['db_name_record'], {
+                'id': self.pk_row,
+                'status': 1,
+                'percents_completed': self.count_percentage(),
+                'finish_backup_datetime': 'NULL'
+            }
+
+        )
         self.db.insert(
             self.config['db_name_log_record'], {
                 'backup_id': self.pk_row,
@@ -295,6 +335,12 @@ class Pg_Backup():
         err = 'Error in {0}:'.format(socket.gethostname()) + str(err)
         self.email_context_error = \
             self.email_context_error + err + '\n'
+
+    def count_percentage(self):
+        total_done = len(self.steps_done)
+        percentage = total_done / self.config['total_steps']
+        percentage = percentage * 100
+        return percentage
 
     def backup(self):
         try:
@@ -348,6 +394,19 @@ class Pg_Backup():
                 }
 
             )
+            if self.count_percentage() == 100:
+                status = 3
+
+            self.db.update(
+                self.config['db_name_record'], {
+                    'id': self.pk_row,
+                    'status': status,
+                    'percents_completed': self.count_percentage(),
+                    'finish_backup_datetime': 'now()'
+                }
+
+            )
+
             self.db.close_conn()
 
             email_ctx_error = self.email_context_error
