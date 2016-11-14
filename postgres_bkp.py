@@ -37,7 +37,7 @@ class Pg_Backup():
         'bkp_error': 'pg_dump -U {0} -w {1} > {2}',
         'rsync': 'echo {0} | sudo -S rsync -r {1} {2}',
         'mount': " echo {0} | sudo -S mount -t cifs '//{1}{2}' '{3}' -o username='{4}',password='{5}',rw,dir_mode=0777,file_mode=0777",
-        'umount': 'sudo umount {0}'
+        'umount': "echo {0} | sudo umount {1}"
     }
 
     email = {
@@ -111,6 +111,7 @@ class Pg_Backup():
             )
             os.chdir(get_last_folder_path(config['local_destiny_folder']))
             cmd = self.commands['umount'].format(
+                config['user_password'],
                 config['local_destiny_folder'])
             umount = subprocess.call(cmd, shell=True)
             if umount != 0:
