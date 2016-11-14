@@ -451,7 +451,6 @@ class Pg_Backup():
                     'percents_completed': self.count_percentage(),
                     'finish_backup_datetime': 'now()'
                 }
-
             )
 
             self.db.close_conn()
