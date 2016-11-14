@@ -23,7 +23,7 @@ BKP_CONFIG = {
     'days_delete': 7,
     'folders_to_pass':
     [
-        # '/var/www/genomika-collaboration.gensoft/genomika_soft/media'
+        '/var/www/genomika-collaboration.gensoft/genomika_soft/media'
     ],
     'send_email_success': True
 }
