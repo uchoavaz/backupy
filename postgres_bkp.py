@@ -329,6 +329,7 @@ class Pg_Backup():
         self.email_context_success = self.email_context_success \
             + '- {0}\n'.format(msg)
         if bkp_context_error != []:
+            self.steps_done.pop()
             msg = "Sync with error: {0}".format(','.join(bkp_context_error))
             self.db.update(
                 self.config['db_name_log_record'], {
