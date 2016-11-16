@@ -354,10 +354,11 @@ class Pg_Backup():
 
     def treat_exception(self, err):
         err = remover_acentos(str(err).replace("'", '_'))
+        self.steps_done.append(False)
         self.db.update(
             self.config['db_name_log_record'], {
                 'id': self.pk_log_row,
-                'status': 3,
+                'status': 4,
                 'log': err
             }
 
@@ -367,10 +368,24 @@ class Pg_Backup():
             self.email_context_error + err + '\n'
 
     def count_percentage(self):
-        total_done = len(self.steps_done)
+        total_done = self.steps_done.count(True)
         percentage = total_done / self.config['total_steps']
         percentage = percentage * 100.0
         return percentage
+
+    def get_status(self):
+        total_done = self.steps_done.count(True)
+        total_not_done = self.steps_done.count(False)
+
+        if self.count_percentage() == 100.0:
+            status = 2
+            return status
+        elif total_done + total_not_done == self.config['total_steps']:
+            status = 3
+            return status
+        else:
+            status = 4
+            return status
 
     def backup(self):
         try:
@@ -443,13 +458,11 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
-            status = 3
-            if self.count_percentage() == 100.0:
-                status = 2
+
             self.db.update(
                 self.config['db_name_record'], {
                     'id': self.pk_row,
-                    'status': status,
+                    'status': self.get_status(),
                     'percents_completed': self.count_percentage(),
                     'finish_backup_datetime': 'now()'
                 }
