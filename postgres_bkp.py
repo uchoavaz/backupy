@@ -410,6 +410,7 @@ class Pg_Backup():
                 ','.join(self.config['folders_to_pass']),
                 self.pk_row
             )
+            import ipdb;ipdb.set_trace()
             self.db.query(query)
             self.mount(self.config)
 
