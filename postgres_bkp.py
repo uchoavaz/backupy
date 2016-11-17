@@ -332,7 +332,7 @@ class Pg_Backup():
         if bkp_context_error != []:
             self.steps_done.pop()
             msg = "Sync with error: {0}".format(','.join(bkp_context_error))
-            self.db.insert(
+            self.pk_log_row = self.db.insert(
                 self.config['db_name_log_record'], {
                     'backup_id': self.pk_row,
                     'log': msg,

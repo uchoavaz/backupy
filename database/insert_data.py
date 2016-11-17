@@ -80,5 +80,8 @@ class InsertData():
             )
         self.conn.commit()
 
+    def query(self, query):
+        pass
+
     def close_conn(self):
         self.conn.close()
