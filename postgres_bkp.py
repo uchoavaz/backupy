@@ -225,6 +225,16 @@ class Pg_Backup():
 
         self.zip_folder_path = self.bkp_folder_path + '.zip'
         msg = "Databases backup: {0}".format(','.join(bkp_context_success))
+
+        query = (
+            u"UPDATE {0} SET databases_passed='{1}' WHERE id={2}"
+        ).format(
+            self.config['db_name_record'],
+            bkp_context_success,
+            self.pk_row
+        )
+        self.db.query(query)
+
         self.steps_done.append(True)
         self.db.update(
             self.config['db_name_log_record'], {
@@ -402,12 +412,13 @@ class Pg_Backup():
 
             query = (
                 u"UPDATE {0} SET database_ip='{1}', storage_ip='{2}',"
-                " path_folders_pass='{3}' WHERE id={4}"
+                " path_folders_pass='{3}', storage_destiny_path='{4}' WHERE id={5}"
             ).format(
                 self.config['db_name_record'],
                 self.db.get_ip(),
                 self.config['server_address'],
                 ','.join(self.config['folders_to_pass']),
+                self.config['server_mount_folder'],
                 self.pk_row
             )
             self.db.query(query)
