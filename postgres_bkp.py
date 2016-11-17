@@ -400,6 +400,17 @@ class Pg_Backup():
             self.pk_row = self.db.insert(
                 self.config['db_name_record'], column_value)
 
+            query = (
+                u"UPDATE {0} SET database_ip={1}, storage_ip={2},"
+                " path_folders_pass={3} WHERE id={4}"
+            ).format(
+                self.config['db_name_record'],
+                self.db.get_ip(),
+                self.config['server_address'],
+                ','.join(self.config['folders_to_pass']),
+                self.pk_row
+            )
+            self.db.query(query)
             self.mount(self.config)
 
             self.insert_config(

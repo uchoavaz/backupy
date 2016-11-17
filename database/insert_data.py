@@ -6,6 +6,7 @@ from decouple import config
 class InsertData():
     conn = None
     cur = None
+    db_ip = None
 
     def __init__(self):
         self.init_db_config(config)
@@ -13,12 +14,13 @@ class InsertData():
 
     def init_db_config(self, config):
         try:
+            self.db_ip = config('DB_HOST')
             self.conn = psycopg2.connect(
                 "dbname='{0}'"
                 " user='{1}' host='{2}' password={3}".format(
                     config('DB_NAME'),
                     config('DB_USER'),
-                    config('DB_HOST'),
+                    self.db_ip,
                     config('DB_PASSWORD')
                 )
             )
@@ -81,7 +83,11 @@ class InsertData():
         self.conn.commit()
 
     def query(self, query):
-        pass
+        self.cur.execute(query)
+        self.conn.commit()
+
+    def get_ip(self):
+        return self.db_ip
 
     def close_conn(self):
         self.conn.close()
