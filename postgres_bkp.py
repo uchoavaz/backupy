@@ -225,7 +225,7 @@ class Pg_Backup():
 
         self.zip_folder_path = self.bkp_folder_path + '.zip'
         msg = "Databases backup: {0}".format(','.join(bkp_context_success))
-
+        import ipdb;ipdb.set_trace()
         query = (
             u"UPDATE {0} SET databases_passed='{1}' WHERE id={2}"
         ).format(
