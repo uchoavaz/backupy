@@ -316,6 +316,15 @@ class Pg_Backup():
             folders_synced = '-'
         msg = "Folders synced: {0}".format(folders_synced)
         self.steps_done.append(True)
+
+        query = (
+            u"UPDATE {0} folders_passed='{1}' SET  WHERE id={2}"
+        ).format(
+            folders_synced,
+            self.pk_row
+        )
+        self.db.query(query)
+
         self.db.update(
             self.config['db_name_log_record'], {
                 'id': self.pk_log_row,
@@ -408,7 +417,7 @@ class Pg_Backup():
                 self.config['db_name_record'], column_value)
 
             query = (
-                u"UPDATE {0} SET database_ip='{1}', storage_ip='{2}',"
+                u"UPDATE {0} SET database_storage_ip='{1}', storage_ip='{2}',"
                 " path_folders_pass='{3}', storage_destiny_path='{4}' WHERE id={5}"
             ).format(
                 self.config['db_name_record'],
