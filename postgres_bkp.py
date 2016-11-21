@@ -325,9 +325,7 @@ class Pg_Backup():
         msg = "Folders synced: {0}".format(folders_synced)
         self.steps_done.append(True)
 
-        query = (
-            u"UPDATE {0} folders_passed='{1}' SET  WHERE id={2}"
-        ).format(
+        query = u"UPDATE {0} folders_passed='{1}' SET  WHERE id={2}".format(
             self.config['db_name_log_record'],
             folders_synced,
             self.pk_row
