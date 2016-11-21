@@ -326,7 +326,7 @@ class Pg_Backup():
         query = (
             u"UPDATE {0} folders_passed='{1}' SET  WHERE id={2}"
         ).format(
-            self.config['db_name_log_record'],
+            self.config['db_name_record'],
             folders_synced,
             self.pk_row
         )
