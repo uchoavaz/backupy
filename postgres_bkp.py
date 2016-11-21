@@ -183,6 +183,12 @@ class Pg_Backup():
         )
         bkp_context_success = []
         bkp_context_error = []
+        query = u"UPDATE {0} SET databases_to_pass='{1}' WHERE id={2}".format(
+            self.config['db_name_record'],
+            ','.join(databases),
+            self.pk_row
+        )
+        self.db.query(query)
         for database in databases:
             db_name = clear_name(database)
             if db_name is not None and db_name not in config['DB_IGNORED']:
