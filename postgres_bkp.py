@@ -183,7 +183,7 @@ class Pg_Backup():
         )
         bkp_context_success = []
         bkp_context_error = []
-
+        import ipdb;ipdb.set_trace()
         query = u"UPDATE {0} SET databases_to_pass='{1}' WHERE id={2}".format(
             self.config['db_name_record'],
             ','.join(databases).strip('\n').replace(' ', ''),
