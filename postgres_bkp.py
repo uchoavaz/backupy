@@ -395,9 +395,6 @@ class Pg_Backup():
         percentage = total_done / self.config['total_steps']
         percentage = percentage * 100.0
 
-        if self.get_status() == 3:
-            percentage = 100
-
         return percentage
 
     def get_status(self):
@@ -497,12 +494,15 @@ class Pg_Backup():
 
         finally:
             self.umount(self.config)
+            percentage = self.count_percentage()
+            if self.get_status() == 3:
+                percentage = 100
 
             self.db.update(
                 self.config['db_name_record'], {
                     'id': self.pk_row,
                     'status': self.get_status(),
-                    'percents_completed': self.count_percentage(),
+                    'percents_completed': percentage,
                     'finish_backup_datetime': 'now()'
                 }
             )
