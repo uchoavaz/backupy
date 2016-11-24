@@ -186,7 +186,7 @@ class Pg_Backup():
 
         query = u"UPDATE {0} SET databases_to_pass='{1}' WHERE id={2}".format(
             self.config['db_name_record'],
-            ','.join(databases.strip('\n').replace(' ', '')),
+            ','.join(databases).strip('\n').replace(' ', ''),
             self.pk_row
         )
         self.db.query(query)
