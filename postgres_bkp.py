@@ -186,7 +186,7 @@ class Pg_Backup():
 
         query = u"UPDATE {0} SET databases_to_pass='{1}' WHERE id={2}".format(
             self.config['db_name_record'],
-            ','.join(databases),
+            ','.join(databases.strip('\n').replace(' ', '')),
             self.pk_row
         )
         self.db.query(query)
@@ -394,6 +394,10 @@ class Pg_Backup():
         total_done = self.steps_done.count(True)
         percentage = total_done / self.config['total_steps']
         percentage = percentage * 100.0
+
+        if self.get_status() == 3:
+            percentage = 100
+
         return percentage
 
     def get_status(self):
